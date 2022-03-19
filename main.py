@@ -9,12 +9,12 @@ header = {
     "Content-Type": "application/json",
     "Content-Length": "423",
     "Connection": "keep-alive",
-    "Authorization":"Bearer xx"
+    "Authorization":"Bearer xxx"
 }
 
 body = {
   "Action": "DescribeIssueListWithPage",
-  "ProjectName": "SRC",
+  "ProjectName": "issue_pool",
   "IssueType": "ALL",
   "PageNumber": 1,
   "PageSize": 20,
@@ -30,6 +30,12 @@ body = {
 #   "Action": "DescribeCodingCurrentUser"
 # }
 
+code_type_dict = {
+    "DEFECT":"bug-tracking",
+    "MISSION":"assignments",
+    "REQUIREMENT":"requirements"
+}
+
 body_json = json.dumps(body)
 s = requests.session()
 login_url = "https://e.coding.net/open-api"
@@ -39,5 +45,6 @@ print(login_ret)
 
 ret_josn = json.loads(login_ret.text)
 list = ret_josn["Response"]["Data"]["List"]
-for i in list:
-    print(i["Name"] + " ")
+for item in list:
+    if item["IssueStatusType"] != "COMPLETED":
+        print(str(item["Code"]) + "-xxx-"+item["Name"] + "-" + "https://seer-group.coding.net/p/" +body["ProjectName"] + "/"+ code_type_dict[item["Type"]] + "/issues/" + str(item["Code"]) + "/detail")
