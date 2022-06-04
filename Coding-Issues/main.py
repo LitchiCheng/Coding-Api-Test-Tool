@@ -4,6 +4,7 @@ from ui import Ui_Form
 
 import json
 import requests
+import os
 
 login_url = "https://e.coding.net/open-api"
 
@@ -48,7 +49,8 @@ project_name = [
     "src",
     "test_center",
     "qm",
-    "robokit"
+    "robokit",
+    "order_issue_pool"
 ]
 
 class mywindow(QtWidgets.QWidget,Ui_Form):  
@@ -59,7 +61,16 @@ class mywindow(QtWidgets.QWidget,Ui_Form):
         self.output.setCurrentIndex(0)
         self.person_name = "无"
         self.person_id = "00000"
-
+        try:
+            if os.path.exists("token"):
+                with open("token") as fp:
+                    token_str=fp.read();
+                    self.token_input.setText(token_str)
+            else:
+                self.token_input.setText("Pleace Copy Your Bearer Token Here.")
+        except:
+            self.token_input.setText("Pleace Copy Your Bearer Token Here.")
+        
     def query(self):
         self.output.setCurrentIndex(0)
         self.textBrowser.clear()
@@ -76,6 +87,10 @@ class mywindow(QtWidgets.QWidget,Ui_Form):
             self.textBrowser_2.append(js)
             self.person_name = person_info_josn["Response"]["User"]["Name"]
             self.person_id = person_info_josn["Response"]["User"]["Id"]
+
+            with open("token",'w') as wf:
+                wf.write(self.token_input.text())
+
         except:
             self.textBrowser.append("Error! Check the raw data.")
        
